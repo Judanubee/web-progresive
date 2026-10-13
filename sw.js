@@ -1,22 +1,45 @@
-// sw.js - Archivo del Service Worker
+const CACHE_NAME = 'app-cache-v1';
 
-// FASE 1: Instalación
-// Se dispara cuando el archivo se descarga por primera vez o hay cambios en él.
+const STATIC_ASSETS = [
+    '/',
+    '/index.html',
+    '/css/style.css',
+    '/js/app.js',
+    '/manifest.json',
+    '/images/im192.png',
+    '/images/im512.png',
+    'https://cdn.tailwindcss.com',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
+];
+
+// FASE 1: Instalación y Almacenamiento en Caché
 self.addEventListener('install', event => {
-    console.log('SW: 1. Instalado correctamente.');
-    // En la siguiente clase, aquí guardaremos archivos en caché.
+    console.log('SW: 1. Instalando y guardando recursos estáticos en la caché...');
+    
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then(cache => {
+                console.log('SW: Caché abierta con éxito:', CACHE_NAME);
+                return cache.addAll(STATIC_ASSETS); 
+            })
+            .then(() => {
+                console.log('SW: Todos los archivos del App Shell fueron almacenados.');
+                return self.skipWaiting(); 
+            })
+            .catch(err => {
+                console.error('SW: Falló el almacenamiento en caché del App Shell:', err);
+            })
+    );
 });
 
 // FASE 2: Activación
-// Se dispara cuando el SW toma el control de la aplicación.
 self.addEventListener('activate', event => {
     console.log('SW: 2. Activado y listo para controlar la app.');
-    // En la siguiente clase, aquí borraremos cachés obsoletas.
+    return self.clients.claim(); 
 });
 
 // FASE 3: Intercepción de Peticiones (Fetch)
-// Se dispara cada vez que la página HTML pide un recurso (CSS, JS, imágenes, etc.)
 self.addEventListener('fetch', event => {
     console.log('SW: 3. Interceptando petición hacia ->', event.request.url);
-    // Por ahora, dejamos que la petición continúe su viaje normal a internet.
 });
+
