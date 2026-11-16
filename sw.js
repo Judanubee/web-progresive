@@ -6,8 +6,8 @@ const STATIC_ASSETS = [
     '/css/style.css',
     '/js/app.js',
     '/manifest.json',
-    '/images/im192.png',
-    '/images/im512.png',
+    '/images/im192.jpg',
+    '/images/im512.jpg',
 ];
 
 // FASE DE INSTALACIÓN (Precaché del App Shell)
